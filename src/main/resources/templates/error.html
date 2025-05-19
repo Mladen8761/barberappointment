@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oops! Something Went Wrong | Reset Studio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #64748b;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--gray-800);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .error-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-header {
+            background-color: var(--danger);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .error-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background-color: var(--danger);
+            transform-origin: center;
+            rotate: 45deg;
+        }
+
+        .error-code {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.3s forwards;
+        }
+
+        .error-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .error-body {
+            padding: 3rem 2rem;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .error-icon {
+            font-size: 6rem;
+            color: var(--danger-light);
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .error-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-200);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+
+        .error-details {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .error-details-title {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .error-details-list {
+            list-style: none;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .error-details-item {
+            padding: 0.75rem;
+            background-color: var(--gray-50);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .error-details-icon {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-icon {
+                font-size: 5rem;
+            }
+
+            .error-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-header">
+            <div class="error-code">404</div>
+            <h1 class="error-title">Page Not Found</h1>
+        </div>
+
+        <div class="error-body">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+
+            <p class="error-message">
+                Oops! The page you're looking for doesn't exist or has been moved.
+                We suggest checking the URL or trying one of the options below.
+            </p>
+
+            <div class="error-actions">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home btn-icon"></i>
+                    Return to Homepage
+                </a>
+            </div>
+
+            <div class="error-details">
+                <h2 class="error-details-title">Here are a few suggestions:</h2>
+                <ul class="error-details-list">
+                    <li class="error-details-item">
+                        <i class="fas fa-check-circle error-details-icon"></i>
+                        <span>Check that the URL is correct and doesn't contain typos</span>
+                    </li>
+                    <li class="error-details-item">
+                        <i class="fas fa-check-circle error-details-icon"></i>
+                        <span>The page might have been moved or deleted</span>
+                    </li>
+                    <li class="error-details-item">
+                        <i class="fas fa-check-circle error-details-icon"></i>
+                        <span>You might not have permission to view this page</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // You can customize the error code and message based on the actual error
+    document.addEventListener('DOMContentLoaded', function() {
+        // Example of how to get error details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorCode = urlParams.get('code');
+        const errorMessage = urlParams.get('message');
+
+        if (errorCode) {
+            document.querySelector('.error-code').textContent = errorCode;
+        }
+
+        if (errorMessage) {
+            document.querySelector('.error-title').textContent = errorMessage;
+        }
+    });
+</script>
+</body>
+</html>

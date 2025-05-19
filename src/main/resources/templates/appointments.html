@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments | Barbershop</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --primary-light: #f5f5f5;
+            --secondary: #666666;
+            --success: #2e7d32;
+            --success-light: #edf7ed;
+            --warning: #ed6c02;
+            --warning-light: #fff4e5;
+            --danger: #d32f2f;
+            --danger-light: #fdeded;
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-400: #bdbdbd;
+            --gray-500: #9e9e9e;
+            --gray-600: #757575;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            color: var(--gray-900);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Header & Navigation */
+        .header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-left: 2rem;
+        }
+
+        .nav-link {
+            color: var(--gray-800);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-800);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .appointments-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .appointments-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+        }
+
+        .appointments-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .appointments-header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .appointments-body {
+            padding: 1.5rem;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .appointments-table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            background-color: var(--gray-50);
+            border-bottom: 2px solid var(--gray-200);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .appointments-table th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .appointments-table th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        .appointments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+
+        .appointments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .appointments-table tr:hover {
+            background-color: var(--gray-50);
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .status-scheduled {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .status-completed {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-pending {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+
+        /* Action buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--gray-800);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--gray-900);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-100);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Date and time formatting */
+        .date-cell, .time-cell {
+            white-space: nowrap;
+        }
+
+        .date-cell i, .time-cell i {
+            margin-right: 0.5rem;
+            color: var(--secondary);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray-700);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            color: var(--gray-400);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .empty-state p {
+            max-width: 400px;
+            margin: 0 auto;
+            color: var(--gray-600);
+        }
+
+        /* Footer with home button */
+        .page-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                height: calc(100vh - 70px);
+                text-align: center;
+                transition: all 0.3s ease;
+                box-shadow: var(--shadow);
+                padding: 2rem 0;
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-item {
+                margin: 1.5rem 0;
+            }
+
+            .appointments-header, .appointments-body {
+                padding: 1rem;
+            }
+
+            .appointments-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .appointments-table th,
+            .appointments-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .status-badge {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .page-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <nav class="navbar">
+        <a href="/" class="logo-text">Barbershop</a>
+
+        <button class="hamburger" id="hamburger">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <ul class="nav-menu" id="nav-menu">
+            <li class="nav-item">
+                <a href="/" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">Services</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">Contact</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="page-header">
+        <h1>My Appointments</h1>
+        <p>View and manage all your scheduled appointments</p>
+    </div>
+
+    <div class="appointments-card">
+        <div class="appointments-header">
+            <h2>Appointment History</h2>
+            <p>Track the status of your past and upcoming appointments</p>
+        </div>
+
+        <div class="appointments-body">
+            <table class="appointments-table" th:if="${not #lists.isEmpty(appointments)}">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="appointment : ${appointments}">
+                    <td class="date-cell">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span th:text="${#temporals.format(appointment.appointmentDate, 'EEEE, MMMM d, yyyy')}">Monday, March 25, 2024</span>
+                    </td>
+                    <td class="time-cell">
+                        <i class="fas fa-clock"></i>
+                        <span th:text="${#temporals.format(appointment.appointmentTime, 'HH:mm')}">14:30</span>
+                    </td>
+                    <td>
+                            <span class="status-badge"
+                                  th:classappend="${'status-' + appointment.status.toString().toLowerCase()}"
+                                  th:text="${appointment.status.toString().substring(0, 1).toUpperCase() + appointment.status.toString().substring(1).toLowerCase()}">
+                                Scheduled
+                            </span>
+                    </td>
+                    <td>
+                        <a th:if="${appointment.status.toString() == 'SCHEDULED'}"
+                           th:href="@{/cancelAppointment(id=${appointment.id})}"
+                           class="btn btn-danger">
+                            <i class="fas fa-times-circle btn-icon"></i>
+                            Cancel
+                        </a>
+                        <span th:unless="${appointment.status.toString() == 'SCHEDULED'}"
+                              style="color: var(--gray-500); font-size: 0.9rem;">
+                                No actions available
+                            </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Empty state when no appointments -->
+            <div class="empty-state" th:if="${#lists.isEmpty(appointments)}">
+                <div class="empty-state-icon">
+                    <i class="far fa-calendar-times"></i>
+                </div>
+                <h3>No appointments found</h3>
+                <p>You don't have any appointments scheduled yet. Book your first appointment to get started.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <a th:href="@{/}" class="btn btn-primary">
+            <i class="fas fa-home btn-icon"></i>
+            Return to Homepage
+        </a>
+        <a th:href="@{/processAppointment}" class="btn btn-secondary">
+            <i class="fas fa-calendar-plus btn-icon"></i>
+            Book New Appointment
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                hamburger.innerHTML = navMenu.classList.contains('active')
+                    ? '<i class="fas fa-times"></i>'
+                    : '<i class="fas fa-bars"></i>';
+            });
+        }
+    });
+</script>
+</body>
+</html>

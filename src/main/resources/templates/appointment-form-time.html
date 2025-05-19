@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking | Barbershop</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #000000;
+            --primary-dark: #000000;
+            --primary-light: #f5f5f5;
+            --secondary: #666666;
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-400: #bdbdbd;
+            --gray-500: #9e9e9e;
+            --gray-600: #757575;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+            --success: #2e7d32;
+            --danger: #d32f2f;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            color: var(--gray-800);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .appointment-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .appointment-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+        }
+
+        .appointment-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .appointment-header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .appointment-body {
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            color: var(--gray-800);
+        }
+
+        .form-section-title .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .form-section-title h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Date carousel styles */
+        .date-carousel-wrapper {
+            position: relative;
+            margin: 0 -2rem;
+            padding: 0 2rem;
+        }
+
+        .date-carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            scroll-snap-type: x mandatory;
+            padding: 0.5rem 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .date-carousel-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .date-option {
+            display: inline-block;
+            margin-right: 12px;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .date-option:last-child {
+            margin-right: 2rem;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .date-card {
+            width: 90px;
+            height: 110px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .date-card:hover {
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .date-card .month {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .date-card .day {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .date-card .weekday {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-top: 0.25rem;
+        }
+
+        input[type="radio"]:checked + .date-card {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        input[type="radio"]:checked + .date-card .month,
+        input[type="radio"]:checked + .date-card .day,
+        input[type="radio"]:checked + .date-card .weekday {
+            color: white;
+        }
+
+        /* Selected indicator */
+        .date-card.selected {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .date-card.selected .month,
+        .date-card.selected .day,
+        .date-card.selected .weekday {
+            color: white;
+        }
+
+        /* Disabled date styles */
+        .date-card.disabled {
+            background-color: var(--gray-100);
+            border-color: var(--gray-200);
+            opacity: 0.7;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .date-card.disabled::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(to top right, transparent calc(50% - 1px), var(--danger), transparent calc(50% + 1px));
+            pointer-events: none;
+        }
+
+        .date-card.disabled .month,
+        .date-card.disabled .day,
+        .date-card.disabled .weekday {
+            color: var(--gray-500);
+        }
+
+        /* Time slots section */
+        .time-section {
+            display: none; /* Hidden by default, shown when date is selected */
+        }
+
+        .time-section.active {
+            display: block;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            position: relative;
+        }
+
+        .time-slot-card {
+            padding: 0.75rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .time-slot-card:hover {
+            border-color: var(--gray-400);
+            background-color: var(--gray-50);
+        }
+
+        input[type="radio"]:checked + .time-slot-card {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Form controls */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--gray-800);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--gray-900);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-100);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .appointment-body {
+                padding: 1.5rem;
+            }
+
+            .date-carousel-wrapper {
+                margin: 0 -1.5rem;
+                padding: 0 1.5rem;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+
+            .form-footer {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .form-footer .btn {
+                width: 100%;
+            }
+        }
+
+        /* Scroll buttons */
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s ease;
+        }
+
+        .scroll-btn:hover {
+            background-color: var(--gray-50);
+        }
+
+        .scroll-btn.prev {
+            left: 10px;
+        }
+
+        .scroll-btn.next {
+            right: 10px;
+        }
+
+        .scroll-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--gray-700);
+            stroke-width: 2;
+        }
+
+        /* Loading indicator */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Back button */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .back-link svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Home
+    </a>
+
+    <div class="appointment-card">
+        <div class="appointment-header">
+            <h1>Book Your Appointment</h1>
+            <p>Select your preferred date and time</p>
+        </div>
+
+        <div class="appointment-body">
+            <form id="appointmentForm" th:action="@{/processFullAppointment}" method="post" th:object="${appointmentDTO}">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <div class="number">1</div>
+                        <h2>Select Date</h2>
+                    </div>
+
+                    <div class="date-carousel-wrapper">
+                        <button type="button" class="scroll-btn prev">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+
+                        <div class="date-carousel-container">
+                            <label th:each="localDate, stat : ${localDates}" class="date-option">
+                                <input type="radio" name="appointmentDate" th:value="${localDate}"
+                                       th:checked="${stat.first && localDate.dayOfWeek.toString() != 'SUNDAY'}"
+                                       th:disabled="${localDate.dayOfWeek.toString() == 'SUNDAY'}"
+                                       onchange="handleDateSelection(this.value)">
+                                <div class="date-card" th:classappend="${localDate.dayOfWeek.toString() == 'SUNDAY'} ? 'disabled' : ''"
+                                     th:attr="data-date=${localDate}">
+                                    <span class="month" th:text="${localDate.month.toString().substring(0,3)}"></span>
+                                    <span class="day" th:text="${localDate.dayOfMonth}"></span>
+                                    <span class="weekday" th:text="${localDate.dayOfWeek.toString().substring(0,3)}"></span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <button type="button" class="scroll-btn next">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="timeSection" class="form-section time-section">
+                    <div class="form-section-title">
+                        <div class="number">2</div>
+                        <h2>Select Time</h2>
+                    </div>
+
+                    <div id="timeSlots" class="time-slots">
+                        <!-- Time slots will be loaded here via AJAX -->
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Confirm Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.querySelector('.date-carousel-container');
+        const prevBtn = document.querySelector('.scroll-btn.prev');
+        const nextBtn = document.querySelector('.scroll-btn.next');
+        const timeSection = document.getElementById('timeSection');
+        const timeSlots = document.getElementById('timeSlots');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const dateCards = document.querySelectorAll('.date-card');
+        const dateInputs = document.querySelectorAll('input[name="appointmentDate"]');
+
+        // Scroll buttons functionality
+        prevBtn.addEventListener('click', function() {
+            carousel.scrollBy({ left: -200, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', function() {
+            carousel.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+
+        // Add click event to date cards to visually select them
+        dateCards.forEach((card, index) => {
+            if (!card.classList.contains('disabled')) {
+                card.addEventListener('click', function() {
+                    // Visually update all cards
+                    dateCards.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+
+                    // Check the corresponding radio button
+                    dateInputs[index].checked = true;
+
+                    // Trigger the change event to load time slots
+                    handleDateSelection(dateInputs[index].value);
+                });
+            }
+        });
+
+        // Select first available date by default
+        const availableDateInputs = document.querySelectorAll('input[name="appointmentDate"]:not([disabled])');
+        if (availableDateInputs.length > 0) {
+            const firstDateInput = availableDateInputs[0];
+            if (firstDateInput.checked) {
+                // Find the corresponding date card and add selected class
+                const firstDateCard = firstDateInput.nextElementSibling;
+                if (firstDateCard) {
+                    firstDateCard.classList.add('selected');
+                }
+                handleDateSelection(firstDateInput.value);
+            }
+        }
+    });
+
+    function handleDateSelection(selectedDate) {
+        const timeSection = document.getElementById('timeSection');
+        const timeSlots = document.getElementById('timeSlots');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Show loading overlay
+        loadingOverlay.classList.add('active');
+
+        // Fetch available time slots for the selected date
+        fetch(`/getAvailableTimes?date=${selectedDate}`)
+            .then(response => response.json())
+            .then(times => {
+                // Clear existing time slots
+                timeSlots.innerHTML = '';
+
+                // Add time slots
+                times.forEach((time, index) => {
+                    const label = document.createElement('label');
+                    label.className = 'time-slot';
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'appointmentTime';
+                    input.value = time;
+                    if (index === 0) {
+                        input.checked = true;
+                    }
+                    input.addEventListener('change', function() {
+                        submitBtn.disabled = false;
+                    });
+
+                    const div = document.createElement('div');
+                    div.className = 'time-slot-card';
+                    div.textContent = formatTime(time);
+
+                    label.appendChild(input);
+                    label.appendChild(div);
+                    timeSlots.appendChild(label);
+                });
+
+                // Show time section
+                timeSection.classList.add('active');
+
+                // Enable submit button if a time is selected
+                const selectedTime = document.querySelector('input[name="appointmentTime"]:checked');
+                if (selectedTime) {
+                    submitBtn.disabled = false;
+                }
+
+                // Hide loading overlay
+                loadingOverlay.classList.remove('active');
+            })
+            .catch(error => {
+                console.error('Error fetching time slots:', error);
+                loadingOverlay.classList.remove('active');
+                alert('Failed to load available times. Please try again.');
+            });
+    }
+
+    function formatTime(timeString) {
+        // Format time as HH:MM (24-hour format)
+        const time = new Date(`2000-01-01T${timeString}`);
+        return time.getHours().toString().padStart(2, '0') + ':' +
+               time.getMinutes().toString().padStart(2, '0');
+    }
+</script>
+</body>
+</html>
